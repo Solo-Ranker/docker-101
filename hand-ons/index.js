@@ -11,18 +11,14 @@ app.post('/users', async (req, res) => {
 
   try {
     // Insert user into PostgreSQL
-    const [userId] = await knex('users').insert({
+   knex('users').insert({
       username,
       email,
       password,
     }).returning('id');
 
-    // Retrieve newly created user
-    const user = await knex('users').where({ id: userId }).first();
-
     res.status(201).json({
-      message: 'User created successfully',
-      user,
+      message: 'User created successfully'
     });
   } catch (error) {
     console.error('Error creating user:', error);
