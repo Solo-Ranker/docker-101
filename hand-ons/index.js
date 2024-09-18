@@ -1,15 +1,9 @@
 const express = require('express');
 const knex = require('knex')(require('./knexfile').development);
-const redisClient = require('./redis');
 const app = express();
 const port = 3000;
 
 app.use(express.json());
-
-// Utility function to cache users in Redis
-const cacheUser = (id, data) => {
-  redisClient.setex(`user:${id}`, 3600, JSON.stringify(data));
-};
 
 // Create a new user
 app.post('/users', async (req, res) => {
@@ -25,9 +19,6 @@ app.post('/users', async (req, res) => {
 
     // Retrieve newly created user
     const user = await knex('users').where({ id: userId }).first();
-
-    // Cache user in Redis
-    cacheUser(userId, user);
 
     res.status(201).json({
       message: 'User created successfully',
