@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
 
@@ -10,7 +9,7 @@ const app = express();
 const port = 3000;
 
 // Connect to MongoDB
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/userdb';
+const MONGO_URI = process.env.MONGO_URI;
 mongoose.connect(MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
@@ -36,14 +35,11 @@ app.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Create new user
     const newUser = new User({
       username,
       email,
-      password: hashedPassword
+      password
     });
 
     // Save user to database
